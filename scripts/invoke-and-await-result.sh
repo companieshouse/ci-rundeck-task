@@ -26,13 +26,19 @@ function checkForAPIError() {
     exit 1                                 
   fi                                       
                                          
-  ERROR_FROM_API=$(jq ".errorCode" bodyout)
-  if [[ -z ERROR_FROM_API ]]; then   
+  ERROR_FROM_API=$(jq ".errorCode // empty" bodyout)
+  if [[ ! -z ${ERROR_FROM_API} ]]; then   
      echo "Error received from API"     
      cat bodyout | jq
      exit 1                                                                                                                                                                
   fi 
 }
+
+# Check for required env vars
+[[ -z ${API_ENDPOINT} ]] && echo "API_ENDPOINT is required" && exit 1
+[[ -z ${JOB_UUID} ]] && echo "JOB_UUID is required" && exit 1
+[[ -z ${AUTH_TOKEN} ]] && echo "AUTH_TOKEN is required" && exit 1
+
 
 echo "Processing job param env vars to form JOB_ARGUMENTS var"
 [[ ! -z ${JOB_PARAM_NAME_1} ]] && JOB_ARGUMENTS="-${JOB_PARAM_NAME_1} ${JOB_PARAM_VALUE_1}"
@@ -65,7 +71,7 @@ do
   # Get the status from the output
   EXECUTION_STATE=$(jq -r .executionState bodyout)
 
-  echo "EXECUTION_STATE=${EXECUTION_STATE}"
+  echo "EXECUTION_STATE=${EXECUTION_STATE} after ${SECONDS} seconds"
 
   if [[ ${EXECUTION_STATE} == "FAILED" ]]; then
     echo "Execution ${EXECUTION_ID} FAILED"
