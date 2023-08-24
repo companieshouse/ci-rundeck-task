@@ -35,10 +35,9 @@ function checkForAPIError() {
 }
 
 # Check for required env vars
-[[ -z ${API_ENDPOINT} ]] && echo "API_ENDPOINT is required" && exit 1
-[[ -z ${JOB_UUID} ]] && echo "JOB_UUID is required" && exit 1
-[[ -z ${AUTH_TOKEN} ]] && echo "AUTH_TOKEN is required" && exit 1
-
+: ${API_ENDPOINT:?API_ENDPOINT parameter is required}
+: ${JOB_UUID:?JOB_UUID parameter is required}
+: ${AUTH_TOKEN:?AUTH_TOKEN parameter is required}
 
 echo "Processing job param env vars to form JOB_ARGUMENTS var"
 [[ ! -z ${JOB_PARAM_NAME_1} ]] && JOB_ARGUMENTS="-${JOB_PARAM_NAME_1} ${JOB_PARAM_VALUE_1}"
