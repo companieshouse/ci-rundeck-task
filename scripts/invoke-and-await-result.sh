@@ -18,7 +18,7 @@
 # The status of the job is then checked using the API until it has completed successfully (state = SUCCEEDED), or fails (state = FAILED) or the timeout is reached.
 # Exit code 0 is returned is the job succeeds, 1 is returned if the job fails and 2 is returned if there is a timeout. 
 
-function check_for_api_error() {
+check_for_api_error() {
     if [[ $1 -gt 0 ]]; then                                  
         log-output error "Failed to call Rundeck API - curl returned code $1"
         cat stdout
