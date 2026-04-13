@@ -34,10 +34,22 @@ check_for_api_error() {
 }
 
 process_environment_vars() {
-    # Check for required env vars
-    : ${API_ENDPOINT:?API_ENDPOINT parameter is required}
-    : ${JOB_UUID:?JOB_UUID parameter is required}
-    : ${AUTH_TOKEN:?AUTH_TOKEN parameter is required}
+    mandatory=(
+        API_ENDPOINT
+        JOB_UUID
+        AUTH_TOKEN
+    )
+
+    for variable in "${mandatory[@]}"; do
+        if [[ -z "$(printenv ${variable})" ]]; then
+            log-output error "Mandatory variable missing: [${variable}]"
+            missing_mandatory_vars="true"
+        fi
+    done
+
+    if [[ "${missing_mandatory_vars}" == "true" ]]; then
+        exit 1
+    fi
 
     log-output info "Processing job param env vars to form JOB_ARGUMENTS var"
     [[ ! -z ${JOB_PARAM_NAME_1} ]] && JOB_ARGUMENTS="-${JOB_PARAM_NAME_1} ${JOB_PARAM_VALUE_1}"
