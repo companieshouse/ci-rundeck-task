@@ -63,9 +63,9 @@ process_environment_vars() {
 call_rundeck_api() {
     log-output info "Calling Rundeck API to invoke job ${API_ENDPOINT}/job/${JOB_UUID}/run"
     curl -s -m 10 -X POST \
-        -H "Content-Type: application/json"
-        -H "Accept: application/json"
-        -H "X-Rundeck-Auth-Token: ${AUTH_TOKEN}"
+        -H "Content-Type: application/json" \
+        -H "Accept: application/json" \
+        -H "X-Rundeck-Auth-Token: ${AUTH_TOKEN}" \
         -d "{'argString':'${JOB_ARGUMENTS}'}" \
         "${API_ENDPOINT}/job/${JOB_UUID}/run" \
         -o bodyout > stdout
