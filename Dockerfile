@@ -1,8 +1,9 @@
-FROM alpine:3.18.3
+FROM 416670754337.dkr.ecr.eu-west-2.amazonaws.com/ci-core-runtime:1.1.0
 
-RUN apk upgrade --no-cache && \
-    apk add --no-cache bash~=5.2 curl~=8.2 jq~=1.6
+SHELL ["/bin/bash", "-c"]
+
+RUN dnf update -y && \
+    dnf install -y \
+        jq-1.7.1
 
 COPY scripts scripts
-
-ENTRYPOINT ["/bin/bash"]
