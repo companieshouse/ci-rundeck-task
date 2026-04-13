@@ -14,6 +14,6 @@ RUN rpm --import http://yum-repository.platform.aws.chdev.org/RPM-GPG-KEY-platfo
     yum-config-manager --add-repo http://yum-repository.platform.aws.chdev.org/platform-noarch.repo && \
     dnf install -y \
         platform-tools-common-${PLATFORM_TOOLS_VERSION} && \
-    yum clean all
+    dnf clean all
 
-COPY scripts scripts
+COPY /scripts /scripts
