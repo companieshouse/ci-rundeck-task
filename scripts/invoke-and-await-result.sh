@@ -13,6 +13,7 @@
 # JOB_PARAM_NAME_1 - the name of a job parameter that should be passed when invoking the job - e.g. "param1"
 # JOB_PARAM_VALUE_1 - the value of the job parameter that should be passed when invoking the job - e.g. "param1value"
 # JOB_PARAM_NAME_2/JOB_PARAM_VALUE_2 through to JOB_PARAM_NAME_5/JOB_PARAM_VALUE_5 - further job parameters that should be passed (up to 5 supported)
+# JOB_ARGUMENTS - a complete set of job arguments that will be passed to rundeck as-is; disables processing of JOB_PARAM_* vars
 # 
 # The job is invoked by an HTTPS POST to the Rundeck API which returns the execution id.
 # The status of the job is then checked using the API until it has completed successfully (state = SUCCEEDED), or fails (state = FAILED) or the timeout is reached.
@@ -51,12 +52,16 @@ process_environment_vars() {
         exit 1
     fi
 
-    log-output info "Processing job param env vars to form JOB_ARGUMENTS var"
-    [[ ! -z ${JOB_PARAM_NAME_1} ]] && JOB_ARGUMENTS="-${JOB_PARAM_NAME_1} ${JOB_PARAM_VALUE_1}"
-    [[ ! -z ${JOB_PARAM_NAME_2} ]] && JOB_ARGUMENTS="${JOB_ARGUMENTS} -${JOB_PARAM_NAME_2} ${JOB_PARAM_VALUE_2}"
-    [[ ! -z ${JOB_PARAM_NAME_3} ]] && JOB_ARGUMENTS="${JOB_ARGUMENTS} -${JOB_PARAM_NAME_3} ${JOB_PARAM_VALUE_3}"
-    [[ ! -z ${JOB_PARAM_NAME_4} ]] && JOB_ARGUMENTS="${JOB_ARGUMENTS} -${JOB_PARAM_NAME_4} ${JOB_PARAM_VALUE_4}"
-    [[ ! -z ${JOB_PARAM_NAME_5} ]] && JOB_ARGUMENTS="${JOB_ARGUMENTS} -${JOB_PARAM_NAME_5} ${JOB_PARAM_VALUE_5}"
+    if [[ -z $JOB_ARGUMENTS ]]; then
+        log-output info "Processing job param env vars to form JOB_ARGUMENTS var"
+        [[ ! -z ${JOB_PARAM_NAME_1} ]] && JOB_ARGUMENTS="-${JOB_PARAM_NAME_1} ${JOB_PARAM_VALUE_1}"
+        [[ ! -z ${JOB_PARAM_NAME_2} ]] && JOB_ARGUMENTS="${JOB_ARGUMENTS} -${JOB_PARAM_NAME_2} ${JOB_PARAM_VALUE_2}"
+        [[ ! -z ${JOB_PARAM_NAME_3} ]] && JOB_ARGUMENTS="${JOB_ARGUMENTS} -${JOB_PARAM_NAME_3} ${JOB_PARAM_VALUE_3}"
+        [[ ! -z ${JOB_PARAM_NAME_4} ]] && JOB_ARGUMENTS="${JOB_ARGUMENTS} -${JOB_PARAM_NAME_4} ${JOB_PARAM_VALUE_4}"
+        [[ ! -z ${JOB_PARAM_NAME_5} ]] && JOB_ARGUMENTS="${JOB_ARGUMENTS} -${JOB_PARAM_NAME_5} ${JOB_PARAM_VALUE_5}"
+    else
+        log-output info "Using supplied JOB_ARGUMENTS var"
+    fi
     log-output info "JOB_ARGUMENTS=${JOB_ARGUMENTS}"
 }
 
